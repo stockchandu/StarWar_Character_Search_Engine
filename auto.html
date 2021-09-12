@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>auto suggest-debouncing</title>
+</head>
+<style>
+    input {
+        width: 200px;
+    }
+
+    #movies {
+        height: 200px;
+        width: 206px;
+        border: 1px solid black;
+        border-top: none;
+        overflow: scroll;
+    }
+</style>
+
+<body>
+    <input type="text" oninput="debounce(main,1000)" id="query">
+    <div id="movies"></div>
+
+    <script>
+
+
+        let parent = document.getElementById("movies");
+
+        let time;
+
+        //getdata function is to call API 
+        async function getdata(search) {
+
+            let getMovie = await fetch(`http://www.omdbapi.com/?apikey=9c3ca374&s=${search}`);
+
+            let data = await getMovie.json();
+
+            return data.Search;
+        }
+
+
+        //appendmovie function is to append the api data to DOM
+        function appendMovie(mov) {
+            parent.innerHTML = null;// its for every time make parent null when value enters
+            mov.forEach(({Title}) => { // the curly bracket is a distructer method
+
+                let p = document.createElement("p");
+
+                p.innerText = Title;
+
+                parent.append(p);
+            })
+
+        }
+
+
+        async function main() {
+
+            let search = document.getElementById("query").value
+
+            let movie = await getdata(search);//it has value of what user enter value in input box
+
+            if (movie === undefined) {
+                return false; // if movie not found then return false dont show error sms in log
+            }
+            appendMovie(movie);
+        }
+
+//debounce function is for delay the api request
+        function debounce(fun, del) {
+            let search = document.getElementById("query").value
+
+            if (search.length < 3) { // if search length is less than 3 dont call api means false 
+                return false;
+            }         
+
+            if (time) {
+                clearTimeout(time);  // when new enter clear previous settimeout , dont call api
+            }
+
+            time = setTimeout(() => {
+                fun(); // fun()is a function is coming oninput debounce(main,1000)
+            }, del)// del is a time of api delay
+        }
+    </script>
+</body>
+
+</html>

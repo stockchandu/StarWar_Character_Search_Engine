@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>star</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="star.css">
+</head>
+<style>
+   
+</style>
+
+<body id="bdy">
+    <audio id="myAudio">
+        <source src="http://soundfxcenter.com/movies/star-wars/8d82b5_Star_Wars_Main_Theme_Song.mp3" type="audio/ogg">
+    </audio>
+
+    <div><img src="stopaudio.png" alt="playaudio" onclick="playAudio()" id="playaudio">
+        <div><img src="playaudio.png" alt="playaudio" onclick="stopAudio()" id="stopaudio"></div>
+    </div>
+
+    <div id="logo"><img src="download.png" alt="" id="logo"></div>
+    <div id="input_box">
+        <div><input type="text" placeholder="Search characters" oninput="debounce(show_char,1000)" id="query"></div>
+        <div><img src="search.png" alt=""></div>
+
+        <div id="show_data">
+
+        </div>
+
+        <div id="personal-info"></div>
+
+    </div>
+
+    <script>
+        let music = document.getElementById("myAudio");
+
+        function playAudio() {
+            music.play();
+
+            document.getElementById("stopaudio").style.visibility = "visible"
+
+        }
+
+        function stopAudio() {
+            music.pause();
+            document.getElementById("stopaudio").style.visibility = "hidden"
+        }
+
+        let time;
+        let parent = document.getElementById("show_data");
+        let sub_parent = document.getElementById("show_characters");
+
+        async function superhero(search) {
+
+            let hero = await fetch(`https://swapi.dev/api/people/?search=${search}`)
+
+            let data = await hero.json();
+
+            return data.results;
+        }
+
+
+        let input_box_div = document.getElementById("input_box")
+
+        async function show_char() {
+
+            let search_val = document.getElementById("query").value;
+
+            let char_name = await superhero(search_val);
+
+
+            if (char_name === undefined) {
+                return false;
+            }
+
+            if (search_val.length === 0) {
+                parent.style.visibility = "hidden"
+                input_box_div.style.borderBottomLeftRadius = "20px"
+                input_box_div.style.borderBottomRightRadius = "20px"
+                input_box_div.style.borderBottom = "0"
+            } else {
+                parent.style.visibility = "visible"
+                input_box_div.style.borderBottom = "3px solid rgb(177, 177, 177)"
+                input_box_div.style.borderBottomLeftRadius = "0"
+                input_box_div.style.borderBottomRightRadius = "0"
+
+            }
+            appendChar(char_name);
+        }
+
+        function debounce(show_char, delay) {
+
+            let search_val = document.getElementById("query").value;
+
+            if (search_val.length < 2) {
+                return false;
+            }
+
+            if (time) {
+                clearTimeout(time);
+            }
+
+            time = setTimeout(() => {
+                show_char();
+            }, delay)
+        }
+
+
+
+
+        function appendChar(ele) {
+
+            parent.innerHTML = null;
+            ele.forEach(({ name, birth_year, gender, height, eye_color, mass, skin_color }) => {
+
+
+                let main_parent = document.createElement("div");
+                main_parent.setAttribute("id", "main_parent")
+
+                let div_1 = document.createElement("div");
+                div_1.setAttribute("id", "div_1");
+
+                let div_1_child_1 = document.createElement("div");
+                div_1_child_1.innerHTML = name;
+
+                let div_1_child_2 = document.createElement("div");
+                div_1_child_2.innerHTML = gender;
+
+                let div_2 = document.createElement("div");
+                div_2.innerHTML = birth_year;
+
+                div_1.append(div_1_child_1, div_1_child_2)
+                main_parent.append(div_1, div_2);
+
+                parent.append(main_parent)
+                show_div_new(div_1_child_1, name, birth_year, gender, height, eye_color, mass, skin_color);
+
+            })
+
+
+        }
+
+        let personal = document.getElementById("personal-info");
+
+        function show_div_new(child_1, name, birth_year, gender, height, eye_color, mass, skin_color) {
+            personal.innerHTML = null;
+            child_1.onclick = () => {
+
+                let main_parent = document.createElement("div");
+
+                let div_1_name = document.createElement("div");
+
+                div_1_name.innerHTML = name;
+
+                let div_2_details = document.createElement("div");
+
+                let div_2_details_1 = document.createElement("div");
+                div_2_details_1.setAttribute("id", "div_2_details_1");
+
+                let div_2_details_1_child_1 = document.createElement("div");
+                div_2_details_1_child_1.innerHTML = "Personal Info"
+
+                let div_2_details_1_child_2 = document.createElement("div");
+                div_2_details_1_child_2.innerHTML = `Birth Year : ${birth_year}`
+
+                let div_2_details_1_child_3 = document.createElement("div");
+                div_2_details_1_child_3.innerHTML = `Gender : ${gender}`
+
+                let div_2_details_1_child_4 = document.createElement("div");
+                div_2_details_1_child_4.innerHTML = `Height : ${height} cm`
+
+                let div_2_details_2 = document.createElement("div");
+                div_2_details_2.setAttribute("id", "div_2_details_2");
+
+                let div_2_details_2_child_1 = document.createElement("div");
+                div_2_details_2_child_1.innerHTML = "Anatomy"
+
+                let div_2_details_2_child_2 = document.createElement("div");
+                div_2_details_2_child_2.innerHTML = `Eye Color : ${eye_color}`
+
+                let div_2_details_2_child_3 = document.createElement("div");
+                div_2_details_2_child_3.innerHTML = `Mass : ${mass}`
+
+                let div_2_details_2_child_4 = document.createElement("div");
+                div_2_details_2_child_4.innerHTML = `Skin Color : ${skin_color}`
+
+                let div_3_button = document.createElement("div");
+                let button = document.createElement("button");
+
+                button.innerHTML = "Go Back";
+
+                div_3_button.append(button);
+
+                div_2_details_1.append(div_2_details_1_child_1, div_2_details_1_child_2, div_2_details_1_child_3, div_2_details_1_child_4);
+
+                div_2_details_2.append(div_2_details_2_child_1, div_2_details_2_child_2, div_2_details_2_child_3, div_2_details_2_child_4);
+
+                div_2_details.append(div_2_details_1, div_2_details_2);
+
+                personal.append(div_1_name, div_2_details, div_3_button);
+                personal.style.visibility = "visible";
+
+                document.getElementById("logo").style.visibility = "hidden"
+                document.getElementById("input_box").style.visibility = "hidden"
+                document.getElementById("show_data").style.visibility = "hidden"
+
+                goback(div_3_button);
+            }
+
+        }
+
+
+        function goback(button) {
+
+            let search_val = document.getElementById("query").value;
+            button.onclick = () => {
+                document.getElementById("show_data").innerHTML = null;
+                personal.style.visibility = "hidden";
+                document.getElementById("logo").style.visibility = "visible";
+                document.getElementById("input_box").style.visibility = "visible";
+                document.getElementById("show_data").style.visibility = "visible";
+                if (search_val.length >= 1) {
+
+                    search_val = null;
+                    input_box_div.style.borderBottomLeftRadius = "20px";
+                    input_box_div.style.borderBottomRightRadius = "20px";
+                    input_box_div.style.borderBottom = "0";
+                    document.getElementById("show_data").style.visibility = "hidden";
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
