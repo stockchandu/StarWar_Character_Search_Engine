@@ -4,7 +4,7 @@ body {
 }
 
 #bdy {
-    background: url('giphy.gif');
+    background: url('../images/giphy.gif');
     background-repeat: repeat-x;
     background-size: 100%;
 }
